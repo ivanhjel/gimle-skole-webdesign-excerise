@@ -1,0 +1,76 @@
+<html>
+  <head>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+
+  </head>
+<body>
+
+  <div id="map" style="width:100%; height:100%;"/>
+
+  <script>
+
+    var map = L.map('map', { minZoom: 0, maxZoom: 18 }).setView([60.371626, 5.353841], 17);
+
+    /*
+      // Alternative layers
+      'norgeskart_bakgrunn'
+      'topo4'
+      'topo4graatone'
+      'terreng_norgeskart'
+      'sjokartraster'
+      'toporaster4'
+    */
+
+
+    layer = L.tileLayer(`https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}`, {
+      maxZoom: 20,
+      attribution: '<a href="https://www.kartverket.no/">Kartverket</a>',
+      subdomains: ['', '2', '3']
+    }); 
+
+    layer.addTo(map);
+
+    var points = {
+      "type" : "FeatureCollection", 
+      "features" : [
+      {
+        "type" : "Feature", 
+        "id" : 1, 
+        "geometry" : 
+        {
+          "type" : "Point", 
+          "coordinates" : [
+          5.353841,60.371626
+          ]
+        }, 
+        "properties" : {
+          "Title" : "Gimle Ungdomsskole", 
+          "Note" : "Dette er plasseringen til skolen."
+        }
+      }
+      ]
+    }
+
+    var geoJsonLayer = L.geoJSON(points, {
+     style: function (feature) {
+      return {color: feature.properties.color};
+    },
+    onEachFeature: function (feature, layer) {
+      layer.bindPopup("<b>" + feature.properties.Title + "</b></br>" + feature.properties.Note);
+    },
+    pointToLayer: function(feature, latlng) {
+      return L.marker(latlng).addTo(map);
+    }});
+
+    geoJsonLayer.addTo(map)
+
+    L.control.scale({
+      "metric": true, 
+      "imperial": false
+    }).addTo(map);
+
+  </script>
+
+</body>
